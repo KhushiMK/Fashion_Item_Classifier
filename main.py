@@ -7,21 +7,26 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
 from tensorflow.keras.utils import to_categorical
 from sklearn.metrics import confusion_matrix
-import os
 from datetime import timedelta
+import os
 
+# Initialize Flask app
 app = Flask(__name__)
 app.secret_key = "your_secret_key"
+
+# Create static folder for plots if not exists
 PLOT_FOLDER = "static"
 os.makedirs(PLOT_FOLDER, exist_ok=True)
 
-# Increase session timeout (2 hours)
+# ✅ Set session timeout to 2 hours
 app.permanent_session_lifetime = timedelta(hours=2)
 
+# ✅ Refresh session on every request
 @app.before_request
 def make_session_permanent():
     session.permanent = True
 
+# ✅ Run CNN model and save results
 def run_model_and_generate_results():
     # Load and preprocess data
     (X_train, y_train), (X_test, y_test) = fashion_mnist.load_data()
@@ -32,7 +37,7 @@ def run_model_and_generate_results():
     y_train_cat = to_categorical(y_train, 10)
     y_test_cat = to_categorical(y_test, 10)
 
-    # Define model
+    # Build simple CNN model
     model = Sequential([
         Conv2D(8, (3, 3), activation='relu', input_shape=(28, 28, 1)),
         MaxPooling2D(pool_size=(2, 2)),
@@ -45,15 +50,17 @@ def run_model_and_generate_results():
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
 
+    # Train model
     history = model.fit(X_train, y_train_cat,
                         epochs=10,
                         batch_size=128,
                         validation_split=0.2,
                         verbose=0)
 
+    # Evaluate model
     test_loss, test_accuracy = model.evaluate(X_test, y_test_cat, verbose=0)
 
-    # Accuracy and loss plot
+    # Plot accuracy & loss
     plt.figure(figsize=(12, 4))
     plt.subplot(1, 2, 1)
     plt.plot(history.history['accuracy'], label='Train Accuracy')
@@ -71,6 +78,8 @@ def run_model_and_generate_results():
     plt.ylabel('Loss')
     plt.legend()
     plt.tight_layout()
+
+    # Save accuracy/loss plot
     acc_loss_path = os.path.join(PLOT_FOLDER, "accuracy_loss.png")
     plt.savefig(acc_loss_path)
 
@@ -86,11 +95,14 @@ def run_model_and_generate_results():
     plt.xlabel('Predicted')
     plt.ylabel('Actual')
     plt.tight_layout()
+
+    # Save confusion matrix plot
     cm_path = os.path.join(PLOT_FOLDER, "confusion_matrix.png")
     plt.savefig(cm_path)
 
     return test_accuracy
 
+# ✅ Routes
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -100,8 +112,7 @@ def predictor():
     acc = run_model_and_generate_results()
     return render_template('predictor.html', accuracy=f"{acc * 100:.2f}")
 
-
+# ✅ Run Flask app on dynamic port (default 10000) and host 0.0.0.0
 if __name__ == '__main__':
-    # Bind to 0.0.0.0 and use PORT environment variable or default to 10000
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port, debug=True)
