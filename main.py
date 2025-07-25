@@ -96,10 +96,14 @@ def index():
 @app.route('/predictor')
 def predictor():
     try:
+        print("🔍 Starting model prediction...")
         acc = run_model_and_generate_results()
+        print(f"✅ Accuracy: {acc}")
         return render_template('predictor.html', accuracy=f"{acc * 100:.2f}%")
     except Exception as e:
-        return f"❌ Error in /predictor: {str(e)}", 500
+        print(f"❌ Error in /predictor: {str(e)}")
+        return f"Internal Server Error: {str(e)}", 500
+
 
 
 
