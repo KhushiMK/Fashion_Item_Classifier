@@ -17,7 +17,7 @@ app.secret_key = "your_secret_key"
 PLOT_FOLDER = "static"
 os.makedirs(PLOT_FOLDER, exist_ok=True)
 
-# ✅ Run CNN model and save results
+# Run CNN model and save results
 def run_model_and_generate_results():
     # Load and preprocess data
     (X_train, y_train), (X_test, y_test) = fashion_mnist.load_data()
@@ -93,7 +93,7 @@ def run_model_and_generate_results():
 
     return test_accuracy
 
-# ✅ Routes
+# Routes
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -102,7 +102,7 @@ def index():
 def predictor():
     return render_template('predictor.html', accuracy="88.89")
 
-# ✅ Run Flask app on dynamic port (default 10000) and host 0.0.0.0
+# Run Flask app on dynamic port (default 10000) and host 0.0.0.0
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port, debug=True)
