@@ -95,8 +95,12 @@ def index():
 
 @app.route('/predictor')
 def predictor():
-    acc = run_model_and_generate_results()
-    return render_template('predictor.html', accuracy=f"{acc * 100:.2f}")
+    try:
+        acc = run_model_and_generate_results()
+        return render_template('predictor.html', accuracy=f"{acc * 100:.2f}%")
+    except Exception as e:
+        return f"❌ Error in /predictor: {str(e)}", 500
+
 
 
 if __name__ == '__main__':
