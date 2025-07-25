@@ -95,12 +95,8 @@ def index():
 
 @app.route('/predictor')
 def predictor():
-    print("✅ Reached /predictor route.")
-    try:
-        return render_template('predictor.html', accuracy="89.61")
-    except Exception as e:
-        print(f"❌ Template render error: {e}")
-        return f"Internal Server Error: {str(e)}", 500
+    acc = run_model_and_generate_results()
+    return render_template('predictor.html', accuracy=f"{acc * 100:.2f}")
 
 
 
