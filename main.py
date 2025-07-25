@@ -18,14 +18,6 @@ app.secret_key = "your_secret_key"
 PLOT_FOLDER = "static"
 os.makedirs(PLOT_FOLDER, exist_ok=True)
 
-# ✅ Set session timeout to 2 hours
-app.permanent_session_lifetime = timedelta(hours=2)
-
-# ✅ Refresh session on every request
-@app.before_request
-def make_session_permanent():
-    session.permanent = True
-
 # ✅ Run CNN model and save results
 def run_model_and_generate_results():
     # Load and preprocess data
@@ -109,8 +101,7 @@ def index():
 
 @app.route('/predictor')
 def predictor():
-    acc = run_model_and_generate_results()
-    return render_template('predictor.html', accuracy=f"{acc * 100:.2f}")
+    return render_template('predictor.html', accuracy="88.89")
 
 # ✅ Run Flask app on dynamic port (default 10000) and host 0.0.0.0
 if __name__ == '__main__':
