@@ -95,8 +95,8 @@ def index():
 
 @app.route('/predictor')
 def predictor():
-   return render_template('predictor.html', accuracy=f"89.83")
-
+    acc = run_model_and_generate_results()
+    return render_template('predictor.html', accuracy=f"{acc * 100:.2f}")
 
 
 
